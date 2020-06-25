@@ -44,11 +44,18 @@ namespace HtmlClipboard
                 AddBorder(args.Skip(1).ToArray(), html, text, "padding: 0 2px; border");
             } if (args.FirstOrDefault() == "a")
             {
+                const string DisqusUserRegex = @"https://disqus\.com/by/([^/]+)/";
                 var text = Clipboard.GetText();
 
                 if (Regex.IsMatch(text, @"^https?://en.wikipedia.org/wiki/"))
                 {
                     WikipediafyHyperlink(text);
+                }
+                else if (Regex.IsMatch(text, DisqusUserRegex))
+                {
+                    var m = Regex.Match(text, DisqusUserRegex);
+                    var s = string.Format("@{0}:disqus", m.Groups[1].Value);
+                    ClipboardHelper.CopyToClipboard(s, s);
                 }
                 else if (html != null &&
                     Regex.IsMatch(text, @"^([\r\n]*[^\r\n]+){1,2}[\r\n]*$") &&
