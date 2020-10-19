@@ -46,6 +46,7 @@ namespace HtmlClipboard
             {
                 const string DisqusUserRegex = @"https://disqus\.com/by/([^/]+)/";
                 var text = Clipboard.GetText();
+                text = Regex.Replace(text, "#:~:text=.*", "");
 
                 if (Regex.IsMatch(text, @"^https?://en.wikipedia.org/wiki/"))
                 {
