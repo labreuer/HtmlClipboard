@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace HtmlClipboard
 {
@@ -67,6 +69,38 @@ namespace HtmlClipboard
                     // System.Web.HttpUtility.UrlEncode()
                     var a = string.Format("<a href=\"{0}\">{1}</a>", url, inside);
                     ClipboardHelper.CopyToClipboard(a, inside);
+                }
+                else if (html != null && html.Contains("text-indent:-48pt"))
+                {
+                    string s = "";
+                    html = GetStrippedHtmlFragmentInnerContent(html);
+                    html = html
+                        .Replace("&ldquo;", "“")
+                        .Replace("&rdquo;", "”")
+                        .Replace("&lsquo;", "‘")
+                        .Replace("&rsquo;", "’")
+                        .Replace("&ndash;", "–");
+                    html = Regex.Replace(html, "(the ?)<span style=\"font-variant:small-caps;\">Lord</span>", "YHWH");
+                    html = Regex.Replace(html, "<span lang=\"en-US\">(.*?)</span>", "$1");
+
+                    foreach (var m in Regex.Matches(html, @"<p(?:\s+style=""\s*(?<s>([^"";]+;?)+)\s*""[^>]+)?>\s*(?<t>.*?)\s*</p>", RegexOptions.Singleline).Cast<Match>())
+                    {
+                        var style = m.Groups["s"];
+                        if (style.Success)
+                        {
+                            var d = Regex.Matches(style.Value, @"(?<k>[^:; ]+)\s*:\s*(?<v>[^:; ]+)").Cast<Match>()
+                                .ToDictionary(mm => mm.Groups["k"].Value, mm => mm.Groups["v"].Value);
+                            Func<string, int> get = key => d.ContainsKey(key) ? int.Parse(Regex.Match(d[key], "[0-9-]+").Value) : 0;
+                            if (get("margin-top") > 0)
+                                s += "\n";
+                            if (get("margin-left") + get("text-indent") > 0)
+                                s += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                        }
+                        s += m.Groups["t"].Value + "\n";
+                    }
+
+                    s = "<blockquote>" + s.Trim() + "</blockquote>";
+                    ClipboardHelper.CopyToClipboard(s, s);
                 }
                 else
                 {
