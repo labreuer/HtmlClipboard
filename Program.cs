@@ -201,6 +201,8 @@ namespace HtmlClipboard
             if (!m.Success)
                 throw new ArgumentException("Hyperlink was not a proper English wikipedia link.", "url");
 
+            url = url.Replace("'", "%27");
+
             var href = string.Format("<a href='{0}'>WP: {1}</a>",
                 url, // no System.Net.WebUtility.UrlEncode?
                 //excluding System.Net.WebUtility.HtmlEncode(
