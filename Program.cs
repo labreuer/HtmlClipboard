@@ -80,7 +80,7 @@ namespace HtmlClipboard
                         .Replace("&lsquo;", "‘")
                         .Replace("&rsquo;", "’")
                         .Replace("&ndash;", "–");
-                    html = Regex.Replace(html, "(the ?)<span style=\"font-variant:small-caps;\">Lord</span>", "YHWH");
+                    html = Regex.Replace(html, "(the )?<span style=\"font-variant:small-caps;\">Lord</span>", "YHWH");
                     html = Regex.Replace(html, "<span lang=\"en-US\">(.*?)</span>", "$1");
 
                     foreach (var m in Regex.Matches(html, @"<p(?:\s+style=""\s*(?<s>([^"";]+;?)+)\s*""[^>]+)?>\s*(?<t>.*?)\s*</p>", RegexOptions.Singleline).Cast<Match>())
