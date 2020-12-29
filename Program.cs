@@ -106,7 +106,7 @@ namespace HtmlClipboard
                 {
                     // Evernote ~6.7.5 killed this by stripping out <code>...</code>
                     //text = Regex.Replace(text, @"`(\w+.*?\w+)`", "<code>$1</code>");
-                    text = Regex.Replace(text, @"`(\w+.*?\w+)`", "<span style='font-family: consolas,monospace;'>$1</span>");
+                    text = Regex.Replace(text, @"`(\w.*?\w)`", "<span style='font-family: consolas,monospace;'>$1</span>");
 
                     if (Regex.IsMatch(text, @"<a href=""[^""]+"">((?!</a>).)+$"))
                         text += "</a>";
